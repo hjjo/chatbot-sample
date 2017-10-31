@@ -1,0 +1,9 @@
+---
+applications:
+- name: connectbot-2017
+  command: npm start
+  path: .
+  memory: 512M
+  instances: 1
+  env:
+    NPM_CONFIG_PRODUCTION: false

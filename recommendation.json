@@ -1,0 +1,116 @@
+{
+  "recommendations": [
+    {
+      "subject": "극장",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 3
+    },
+    {
+      "subject": "공연",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 4
+    },
+    {
+      "subject": "요리",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 3
+    },
+    {
+      "subject": "헬스",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "운동",
+      "affectedBy": {
+        "weather": true,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "홈쇼핑",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 1
+    },
+    {
+      "subject": "게임",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "독서",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "스포츠관람",
+      "affectedBy": {
+        "weather": true,
+        "dayOfWeek": false
+      },
+      "duration": 3
+    },
+    {
+      "subject": "등산",
+      "affectedBy": {
+        "weather": true,
+        "dayOfWeek": true
+      },
+      "duration": 8
+    },
+    {
+      "subject": "여행",
+      "affectedBy": {
+        "weather": true,
+        "dayOfWeek": true
+      },
+      "duration": 24
+    },
+    {
+      "subject": "드라이브",
+      "affectedBy": {
+        "weather": true,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "TV",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    },
+    {
+      "subject": "외국어공부",
+      "affectedBy": {
+        "weather": false,
+        "dayOfWeek": false
+      },
+      "duration": 2
+    }
+  ]
+}

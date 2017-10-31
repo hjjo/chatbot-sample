@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# google api credentials
+client_secret.json
