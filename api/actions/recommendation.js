@@ -16,34 +16,54 @@
 
 'use strict';
 
-const recommendations = require('../../recommendation.json').recommendations;
+const request = require('request');
+const calendar = require('./calendar.js');
+const moment = require('moment');
 
 let recommend = (context) => {
     context.need_conversation = true;
     context.command = undefined;
 
+    var recommendations = Object.assign({}, require('../../recommendation.json').recommendations);
+
     let reqOption = {
         method : 'GET',
-        url : process.env.RBS_URL + '/freebusy/room',
+        url : process.env.TWC_URL + '/api/weather/v1/geocode/37/127/forecast/daily/3day.json',
         headers : {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        qs : {
-        'roomid' : roomid,
-        'start' : startTimestamp.valueOf(),
-        'end' : endTimestamp.valueOf()
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
     
 
     return new Promise((resolved, rejected) => {
+        // get weather data
         request(reqOption, (err, res, body) => {
             if(!err){
                 body = JSON.parse(body);
-                console.log(body);
+
+                let forecasts = body.forecasts;
+                let weather = [];
+                forecasts.forEach((forecast) => {
+                    weather.push({
+                        'day' : forecast.day? forecast.day.phrase_32char : undefined,
+                        'night' : forecast.night? forecast.night.phrase_32char : undefined
+                    });
+                });
+
+                console.log(weather);
             }
         })
+
+        //get recent activites
+        context.endDate = new moment().format("YYYY-MM-DD");
+        context.startDate = new moment().add(-1, 'month').format("YYYY-MM-DD");
+
+        calendar.listEvents(context).then(events => {
+            events.forEach(event => {
+                console.log(event.summary)
+            });
+        });
 
         context.recommend_result = recommendations[Math.floor(Math.random() * recommendations.length)];
         resolved(context);

@@ -31,7 +31,9 @@ let conversation = new Conversation(config.conversation);
 let getConversationResponse = (message, context) => {
   let payload = {
     workspace_id: process.env.WORKSPACE_ID,
-    context: context || {},
+    context: Object.assign({
+      'timezone' : "Asia/Seoul"
+    }, context),
     input: message || {}
   };
 

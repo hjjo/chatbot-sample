@@ -18,10 +18,11 @@
 
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
-var tinyurl = require('tinyurl');
+const tinyurl = require('tinyurl');
 const googleCred = require('../../client_secret.json');
 const cloudant = require('../../util/db');
 const db = cloudant.db['context'];
+const moment = require('moment');
 
 var auth = new googleAuth();
 var SCOPES = ['https://www.googleapis.com/auth/calendar'];
@@ -78,12 +79,15 @@ let listEvents = (context) => {
             oauth2Client.credentials = context.google_token;
 
             console.log(context.startDate, context.endDate);
+            if(!context.startDate){
+                context.startDate = new moment().format("YYYY-MM-DD");
+            }
 
-            let startDate = new Date(context.startDate);
-            let endDate =  context.endDate ? new Date(context.endDate) : new Date(context.startDate);
-            context.endDate ? true : endDate.setDate(startDate.getDate() + 1);
+            let startDate = new moment(context.startDate + 'T00:00:00+0900');
+            let endDate =  context.endDate ? new moment(context.endDate + 'T00:00:00+0900') : new moment(context.startDate + 'T00:00:00+0900');
+            context.endDate ? true : endDate.add(1, 'day');
 
-            console.log(startDate, endDate)
+            //console.log(startDate, endDate)
 
             calendar.events.list({
                 auth: oauth2Client,
@@ -92,18 +96,26 @@ let listEvents = (context) => {
                 timeMax: endDate.toISOString(),
                 maxResults: 10,
                 singleEvents: true,
-                orderBy: 'startTime'
+                orderBy: 'startTime',
+                timeZone: context.timezone
             }, function(err, response) {
                 if(!err){
-                    console.log(response.items); //need to refine
+                    //console.log(response.items); //need to refine
                     context.list_events_result = response.items;
+                    context.list_events_result_string = [];
+                    if(response.items && response.items.length > 0){
+                        response.items.forEach(event => {
+                            //console.log(event.start)
+                            context.list_events_result_string.push(new moment(event.start.dateTime).format('hh:mm') + " ~ " + new moment(event.end.dateTime).format('hh:mm') + " : " + event.summary);
+                        });
+                    }
+                    console.log(context.list_events_result_string)
                     resolved(context);
                 }
                 else{
                     context.need_google_authorization = true;
                     resolved(context);
                 }
-                
             });
         }
         else{
@@ -122,21 +134,39 @@ let addEvent = (context) => {
             var calendar = google.calendar('v3');
             oauth2Client.credentials = context.google_token;
 
-            let startDate = new Date(context.startDate);
-            let endDate =  context.endDate ? new Date(context.endDate) : new Date(context.startDate);
-            context.endDate ? true : endDate.setDate(startDate.getDate() + 1);
+            let startDate = context.startDate;
+            let endDate = context.endDate;
+            let startTime = context.startTime ? context.startTime : '00:00:00';
+            let endTime = context.endTime;
 
-            console.log(context.startDate, endDate)
+            let start = new moment(context.startDate + 'T'+ startTime + '+0900');
+            let end;
+            
+            if(endDate){
+                if(endTime){
+                    end = new moment(context.endDate + 'T' + endTime + '+0900');
+                }
+                else{
+                    end = new moment(context.endDate + 'T' + startTime + '+0900');
+                    end.add(2, 'hour')
+                }
+            }
+            else{
+                end = new moment(context.startDate + 'T'+ startTime + '+0900');
+                end.add(1, 'day');
+            }
 
             var event = {
                 'summary': context.data.name,
                 //'location': '800 Howard St., San Francisco, CA 94103',
                 //'description': 'A chance to hear more about Google\'s developer products.',
                 'start': {
-                    'date': context.startDate
+                    'dateTime': start.toISOString(),
+                    'timeZone': context.timezone
                 },
                 'end': {
-                    'date': context.startDate
+                    'dateTime': end.toISOString(),
+                    'timeZone': context.timezone
                 },
                 // 'recurrence': [
                 //     'RRULE:FREQ=DAILY;COUNT=1'
