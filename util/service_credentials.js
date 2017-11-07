@@ -54,7 +54,8 @@ credentials.nlu.password = process.env.NLU_PASSWORD;
 credentials.twc.url = process.env.TWC_URL;
 
 if(process.env.VCAP_SERVICES){
-    let services = process.env.VCAP_SERVICES;
+    let services = JSON.parse(process.env.VCAP_SERVICES);
+
     //cloudant
     credentials.cloudant.url = services.cloudantNoSQLDB[0].credentials.url;
 

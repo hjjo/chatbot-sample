@@ -40,6 +40,7 @@ let doAction = (context) => {
             context.people = undefined;
             context.action = undefined;
             context.data = {};
+            context.command = undefined;
             return context;
     }
 }

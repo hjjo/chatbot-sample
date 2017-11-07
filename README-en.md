@@ -3,6 +3,7 @@
 *Read this in other languages: [한국어](README.md).*
 
 Cloned and developed from [Conversation Simple](https://github.com/watson-developer-cloud/conversation-simple)
+English workspace and README are not supported yet.
 
 ![Demo](readme_images/demo.gif)
 
