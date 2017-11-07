@@ -33,9 +33,11 @@
 
 * [tinyurl]
 
-# Steps
+# 실습
 
-[IBM Cloud에 바로 배포](1-IBM-Cloud에-배포하기)하거나 [로컬에서 실행](2-로컬에서-실행하기)합니다.
+1. [사전 준비 사항](#사전-준비-사항)을 먼저 완료하십시오.
+1. 애플리케이션을 [IBM Cloud에 바로 배포](#1-ibm-cloud에-배포하기)하거나 [로컬에서 실행](#2-로컬에서-실행하기)합니다.
+1. [Watson Conversation Tool 실습[#Watson-Conversation-Tool-실습]을 통해 챗봇을 완성합니다.
 
 ## 사전 준비 사항
 
