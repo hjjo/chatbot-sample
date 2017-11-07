@@ -1,33 +1,28 @@
-# IBM Watson을 활용한 AI 비서 - 캘린더봇
+# Conversation Sample Application 
 
-*Read this in other languages: [English](README-en.md).*
+*Read this in other languages: [한국어](README.md).*
 
-이 애플리케이션은 [Conversation Simple](conversation_simple)을 기반으로 개발되었습니다.
+Cloned and developed from [Conversation Simple](https://github.com/watson-developer-cloud/conversation-simple)
 
 ![Demo](readme_images/demo.gif)
 
-이 애플리케이션은 [데모 링크][demo_url]에서 테스트할 수 있습니다.
+You can view a [demo][demo_url] of this app.
 
-## 사전 준비 사항
+## Before you begin
 
-* IBM Cloud의 계정을 생성합니다.
-    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/)하거나 갖고 계신 계정을 사용하십시오. 계정에 512MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
-* 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
-    * [Node.js 런타임 및 npm 패키지 매니저 설치](https://nodejs.org/#download)
+* Create a Bluemix account
+    * [Sign up](https://console.ng.bluemix.net/registration/?target=/catalog/%3fcategory=watson) in Bluemix, or use an existing account. Your account must have available space for at least 1 app and 1 service.
+* Make sure that you have the following prerequisites installed:
+    * The [Node.js](https://nodejs.org/#download) runtime, including the [npm][npm_link] package manager
     * The [Cloud Foundry][cloud_foundry] command-line client
 
-    Note: Ensure that you Cloud Foundry version is up to date
+      Note: Ensure that you Cloud Foundry version is up to date
 
-## IBM Cloud에 배포하기
-[이 링크를 클릭하여 애플리케이션을 IBM Cloud에 배포합니다.](https://bluemix.net/deploy?repository=https://github.com/hjjo/chatbot-sample.git)
+## Installing locally
 
-### 구글 캘린더 API Client Secret 입력
+If you want to modify the app or use it as a basis for building your own app, install it locally. You can then deploy your modified version of the app to the Bluemix cloud.
 
-## 로컬에서 실행하기
-
-이 앱을 베이스로 하여 수정 및 새로운 앱을 개발하고자 하는 경우 로컬에 설치할 수 있습니다. 수정한 앱 버전을 다시 IBM Cloud로 배포할 수 있습니다.
-
-### 소스 코드 다운로드
+### Getting the files
 
 Use GitHub to clone the repository locally, or [download the .zip file](https://github.com/watson-developer-cloud/conversation-simple/archive/master.zip) of the repository and extract the files.
 
@@ -216,13 +211,33 @@ Find more open source projects on the
 [IBM Github Page](http://ibm.github.io/).
 
 
-[conversation_simple]: https://github.com/watson-developer-cloud/conversation-simple
 [cf_docs]: (https://www.ibm.com/watson/developercloud/doc/common/getting-started-cf.html)
 [cloud_foundry]: https://github.com/cloudfoundry/cli#downloads
-[demo_url]: https://connectbot-2017.eu-gb.mybluemix.net/
+[demo_url]: http://conversation-simple.mybluemix.net/
 [doc_intents]: (https://console.bluemix.net/docs/services/conversation/intents-entities.html#planning-your-entities)
 [docs]: http://www.ibm.com/watson/developercloud/doc/conversation/overview.shtml
 [docs_landing]: (https://console.bluemix.net/docs/services/conversation/index.html#about)
 [node_link]: (http://nodejs.org/)
 [npm_link]: (https://www.npmjs.com/)
 [sign_up]: bluemix.net/registration
+
+
+---
+declared-services:
+  my-conversation-service:
+    label: conversation
+    plan: free
+  my-cloudant-service:
+    label: cloudant
+    plan: free
+applications:
+- name: conversation-simple
+  command: npm start
+  path: .
+  memory: 256M
+  instances: 1
+  services:
+  - my-conversation-service
+  - my-cloudant-service
+  env:
+    NPM_CONFIG_PRODUCTION: false

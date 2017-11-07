@@ -1,9 +1,0 @@
-{
-    "conversation" : {
-    	"url" : "https://gateway.watsonplatform.net/conversation/api",
-    	"version_date" : "2016-10-21",
-    	"version" : "v1"
-    },
-
-    "dateTimeFormat" : "HH:mm MM/DD/YYYY"
-}

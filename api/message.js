@@ -17,7 +17,7 @@
  'use strict';
 
 const Conversation = require('watson-developer-cloud/conversation/v1'); // watson sdk
-const config = require('../util/config');
+const credentials = require('../util/service_credentials');
 const request = require('request');
 const moment = require('moment');
 const actionHandler = require('./actions/main')
@@ -26,16 +26,20 @@ const cloudant = require('../util/db');
 const db = cloudant.db['conversation'];
 
 // Create a Service Wrapper
-let conversation = new Conversation(config.conversation);
+let conversation = new Conversation(credentials.conversation);
 
 let getConversationResponse = (message, context) => {
   let payload = {
-    workspace_id: process.env.WORKSPACE_ID,
+    workspace_id: credentials.conversation.workspace_id,
     context: Object.assign({
       'timezone' : "Asia/Seoul"
     }, context),
     input: message || {}
   };
+
+  if(!payload.context.data){
+    payload.context.data = {};
+  }
 
   payload = preProcess(payload);
 
@@ -70,7 +74,13 @@ let getConversationResponse = (message, context) => {
           }
           // return 값이 변경된 data일 경우
           else{
-            resolved(processed);
+            if(!processed.context){
+              data.context = processed;
+            }
+            else{
+              data = processed;
+            }
+            resolved(data);
           }
         }
         else{

@@ -19,7 +19,6 @@
 /*
  * Cloudant DB Module
  */
-const config = require('./config')
 
 let cloudant = require('cloudant')({
     'url': process.env.CLOUDANT_URL,

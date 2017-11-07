@@ -31,6 +31,16 @@ let doAction = (context) => {
             return calendar.addEvent(context);
         case "recommend":
             return recommendation.recommend(context);
+        case "finish":
+            context.startDate = undefined;
+            context.endDate = undefined;
+            context.startTime = undefined;
+            context.endTime = undefined;
+            context.place = undefined;
+            context.people = undefined;
+            context.action = undefined;
+            context.data = {};
+            return context;
     }
 }
 

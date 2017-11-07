@@ -19,25 +19,26 @@
 const request = require('request');
 const calendar = require('./calendar.js');
 const moment = require('moment');
+const nluService = require('watson-developer-cloud/natural-language-understanding/v1.js');
+const credentials = require('../../util/service_credentials');
 
-let recommend = (context) => {
-    context.need_conversation = true;
-    context.command = undefined;
+let nlu = new nluService({
+  username: credentials.nlu.username,
+  password: credentials.nlu.password,
+  version_date: nluService.VERSION_DATE_2017_02_27
+});
 
-    var recommendations = Object.assign({}, require('../../recommendation.json').recommendations);
-
+let getWeatherData = () => {
     let reqOption = {
         method : 'GET',
-        url : process.env.TWC_URL + '/api/weather/v1/geocode/37/127/forecast/daily/3day.json',
+        url : credentials.twc.url + '/api/weather/v1/geocode/37/127/forecast/daily/3day.json',
         headers : {
             'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
-    
 
     return new Promise((resolved, rejected) => {
-        // get weather data
         request(reqOption, (err, res, body) => {
             if(!err){
                 body = JSON.parse(body);
@@ -51,22 +52,121 @@ let recommend = (context) => {
                     });
                 });
 
-                console.log(weather);
+                resolved(weather)
+            }
+            else{
+                resolved([])
             }
         })
+    })
+}
 
+let getMonthlyActivities = (context) => {
+    return new Promise((resolved, rejected) => {
         //get recent activites
-        context.endDate = new moment().format("YYYY-MM-DD");
-        context.startDate = new moment().add(-1, 'month').format("YYYY-MM-DD");
+        let activities = "";
 
-        calendar.listEvents(context).then(events => {
-            events.forEach(event => {
+        context.data.endDate = new moment().format("YYYY-MM-DD");
+        context.data.startDate = new moment().add(-1, 'month').format("YYYY-MM-DD");
+
+        calendar.listEvents(context).then(result => {
+            result.data.list_events_result.forEach(event => {
                 console.log(event.summary)
+                activities += event.summary + ".  "
             });
-        });
 
-        context.recommend_result = recommendations[Math.floor(Math.random() * recommendations.length)];
-        resolved(context);
+            if(activities.length > 10){
+                nlu.analyze({
+                    'text': activities, // Buffer or String
+                    'features': {
+                        'categories': {}
+                    }
+                }, function(err, response) {
+                    if (err){
+                        console.log('error:', err);
+                        resolved([]);
+                    }
+                    else{
+                        //console.log(JSON.stringify(response, null, 2));
+                        resolved(response.categories);
+                    }
+                });
+            }
+            else{
+                resolved([]);
+            }
+            
+        });
+    });
+}
+
+let recommend = (context) => {
+    context.need_conversation = true;
+    context.command = undefined;
+
+    var recommendations = Object.assign({}, require('../../recommendation.json').recommendations);    
+
+    return new Promise((resolved, rejected) => {
+
+        let promises = [getWeatherData(), getMonthlyActivities(context)]
+
+        Promise.all(promises).then(data => {
+            let weather = data[0];
+
+            let recentActivities = data[1];
+
+            //get date
+            let day = new moment().utcOffset('+0900').day()
+            let isHoliday = false;
+            if(day == 0 || day == 6){
+                isHoliday = true;
+            }
+
+            /**
+             * Recommendation example
+             * {
+             *       "subject": "공연",
+             *       "affectedBy": {
+             *           "weather": false,
+             *           "dayOfWeek": false
+             *       },
+             *       "duration": 4
+             *   },
+             */
+            let remained_recommendations = [];
+
+            Object.keys(recommendations).forEach((index) => {
+                let recommendation = recommendations[index];
+                
+                recommendation.availability = true;
+                if(recommendation.affectedBy.weather){
+                    let curruntWeather = weather[0].day ? weather[0].day : weather[0].night
+                    if(curruntWeather.toLowerCase().indexOf('rain') >= 0){
+                        recommendation.availability = false;
+                        console.log(recommendation.subject, "weather problem")
+                    }
+                }
+                if(recommendation.affectedBy.dayOfWeek && (isHoliday == false)){
+                    recommendation.availability = false;
+                    console.log(recommendation.subject, "weekend activity")
+                }
+                if(recentActivities){
+                    recentActivities.forEach(activity => {
+                        recommendation.categories.forEach(cat => {
+                            if(activity.label.indexOf(cat)){
+                                recommendation.availability = false;
+                                console.log(recommendation.subject, "recently done")
+                            }
+                        })
+                    });
+                }
+                if(recommendation.availability){
+                    remained_recommendations.push(recommendation);
+                }
+            });
+            context.data.rec_result = remained_recommendations[Math.floor(Math.random() * remained_recommendations.length)];
+            resolved(context);
+        });      
     });
 }
 

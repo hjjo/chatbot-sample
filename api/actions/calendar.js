@@ -24,6 +24,16 @@ const cloudant = require('../../util/db');
 const db = cloudant.db['context'];
 const moment = require('moment');
 
+if(!googleCred){
+    googleCred = {
+        'installed' : {
+            'client_id' : process.env.GOOGLE_CLIENT_ID,
+            'client_secret' : process.env.GOOGLE_CLIENT_SECRET,
+            'redirect_uris' : [process.env.GOOGLE_REDIRECT_URI]
+        }
+    }
+}
+
 var auth = new googleAuth();
 var SCOPES = ['https://www.googleapis.com/auth/calendar'];
 var oauth2Client = new auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0]);
@@ -42,26 +52,27 @@ let authorize = (context) => {
         console.log(authUrl);
 
         tinyurl.shorten(authUrl, function(res) {
-            context.auth_url = res;
+            context.data ? context.data : {};
+            context.data.auth_url = res;
             resolved(context);
         });
     });
 }
 
 let getToken = (context) => {
-    let code = context.auth_code;
+    let code = context.data.auth_code;
     context.need_conversation = true;
     context.command = undefined;
 
     return new Promise((resolved, rejected) => {
         oauth2Client.getToken(code, function(err, token) {
             if(err){
-                context.status = "error";
+                context.data = {};
+                context.data.status = "error";
             }
             else{
+                context.data = {};
                 context.google_token = token;
-                context.auth_url = undefined;
-                context.auth_code = undefined;
             }
             resolved(context);
         });
@@ -100,20 +111,22 @@ let listEvents = (context) => {
                 timeZone: context.timezone
             }, function(err, response) {
                 if(!err){
+                    context.data = context.data ? context.data : {};
                     //console.log(response.items); //need to refine
-                    context.list_events_result = response.items;
-                    context.list_events_result_string = [];
+                    context.data.list_events_result = response.items;
+                    context.data.list_events_result_string = [];
                     if(response.items && response.items.length > 0){
                         response.items.forEach(event => {
                             //console.log(event.start)
-                            context.list_events_result_string.push(new moment(event.start.dateTime).format('hh:mm') + " ~ " + new moment(event.end.dateTime).format('hh:mm') + " : " + event.summary);
+                            context.data.list_events_result_string.push(new moment(event.start.dateTime).format('hh:mm') + " ~ " + new moment(event.end.dateTime).format('hh:mm') + " : " + event.summary);
                         });
                     }
-                    console.log(context.list_events_result_string)
+                    console.log(context.data.list_events_result_string)
                     resolved(context);
                 }
                 else{
                     context.need_google_authorization = true;
+                    context.google_token = undefined;
                     resolved(context);
                 }
             });
@@ -139,25 +152,37 @@ let addEvent = (context) => {
             let startTime = context.startTime ? context.startTime : '00:00:00';
             let endTime = context.endTime;
 
-            let start = new moment(context.startDate + 'T'+ startTime + '+0900');
+            let start = new moment(startDate + 'T'+ startTime + '+0900');
             let end;
             
             if(endDate){
                 if(endTime){
-                    end = new moment(context.endDate + 'T' + endTime + '+0900');
+                    end = new moment(endDate + 'T' + endTime + '+0900');
                 }
                 else{
-                    end = new moment(context.endDate + 'T' + startTime + '+0900');
-                    end.add(2, 'hour')
+                    end = new moment(endDate + 'T' + startTime + '+0900');
                 }
             }
             else{
-                end = new moment(context.startDate + 'T'+ startTime + '+0900');
-                end.add(1, 'day');
+                if(context.startTime){
+                    end = new moment(startDate + 'T' + startTime + '+0900');
+                    end.add(2, 'hour')
+                }
+                else{
+                    end = new moment(startDate + 'T'+ startTime + '+0900');
+                    end.add(1, 'day');
+                }
             }
+            
+            console.log(start.toISOString(), end.toISOString())
+
+            let summary = "";
+            context.people? (summary += context.people + " ") : true;
+            context.place? (summary += context.place  + " ") : true;
+            context.action? (summary += context.action  + " ") : true;
 
             var event = {
-                'summary': context.data.name,
+                'summary': summary,
                 //'location': '800 Howard St., San Francisco, CA 94103',
                 //'description': 'A chance to hear more about Google\'s developer products.',
                 'start': {
@@ -176,6 +201,10 @@ let addEvent = (context) => {
                 },
             };
 
+            if(context.place){
+                event.location = context.place;
+            }
+
             calendar.events.insert({
                 auth: oauth2Client,
                 calendarId: 'primary',
@@ -184,14 +213,20 @@ let addEvent = (context) => {
                 console.log(err, event)
                 if (err) {
                     context.need_google_authorization = true;
+                    context.google_token = undefined;
                     resolved(context);
                 }
                 else{
+                    context.data = context.data?context.data:{};
                     console.log('Event created: %s', event.htmlLink);
-                    context.add_event_result = event.htmlLink;
+                    context.data.add_event_result = event.htmlLink;
                     resolved(context);
                 }
             });
+        }
+        else{
+            context.need_google_authorization = true;
+            resolved(context);
         }
     });
 }
