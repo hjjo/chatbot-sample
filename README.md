@@ -94,7 +94,9 @@ Cloudant NoSQL DB | cloudantNoSQLDB | Lite | cloudant-service
 서비스 이름은 반드시 표를 참조하여 입력하십시오.
 
 #### CLI 명령으로 서비스 생성하는 방법
-커맨드 창을 열어 소스코드의 프로젝트 루트 경로로 이동합니다.
+
+(중요) 커맨드 창을 열어 소스코드의 프로젝트 루트 경로로 이동합니다.
+
 CLI를 통해 서비스를 생성하는 경우 먼저 다음 명령을 참조하여 로그인 하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_login)를 참조하세요.
 > bx login [-a api_endpoint]
 
@@ -132,6 +134,14 @@ api_endpoint의 url은 리전별로 다릅니다.
 > npm start
 
 ### 2.3 IBM Cloud에 배포
+
+`<project_root>/manifest.yml`에서 애플리케이션 이름을 변경합니다. 애플리케이션 이름은 IBM Cloud 내에서 Unique한 값이어야 합니다. 아래와 같이 날짜와 이니셜을 더해 겹치지 않도록 설정합니다.
+
+<pre>
+applications:
+- name: connectbot-2017-1109-hjjo
+</pre>
+
 다음 명령으로 앱을 IBM Cloud에 배포합니다.
 > bx app push
 
@@ -145,8 +155,13 @@ api_endpoint의 url은 리전별로 다릅니다.
     ![Icon image to import a workspace](readme_images/import_workspace_icon.png)
 
 1. 애플리케이션 소스코드의 /training/calendar_bot_workspace.json 파일을 선택합니다.
+    
     `<project_root>/training/calendar_bot_workspace.json`
 1. ``Everything (Intents, Entities, and Dialog)``를 선택하고 ``Import`` 버튼을 눌러 워크스페이스를 생성합니다.
+1. 좌측의 Workspaces 아이콘을 눌러 워크스페이스 목록으로 돌아갑니다.
+
+    ![Workspaces icon](readme_images/workspaces_icon.png)
+
 1. 생성된 워크스페이스의 카드 우측 상단에 위치한 아이콘을 눌러 ``View Details``를 선택합니다.
 
     ![Workspace detail](readme_images/workspace_detail.png)
@@ -159,12 +174,16 @@ api_endpoint의 url은 리전별로 다릅니다.
 ### 3.2 구글 캘린더 API 설정
 애플리케이션 대시보드의 Runtime 페이지에 있는 ``Environment Variables`` 탭에서 계속 진행하십시오.
 1. GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET의 VALUE 값을 사전 준비사항에서 기록해둔 값으로 변경합니다.
+1. 저장 버튼을 눌러 변경한 환경변수 값을 저장합니다.
 
 ### 3.3 애플리케이션 재시작
 애플리케이션 대시보드에서 변경한 환경 변수를 반영하기 위해 애플리케이션을 재시작 하십시오. 
+상단의 재시작 아이콘을 눌러 재시작할 수 있습니다.
+
+    ![Restart icon](readme_images/restart_icon.png)
 
 ### 3.4 애플리케이션 실행
-``Visit App URL`` 버튼을 클릭하여 애플리케이션을 실행합니다.
+``Routes`` 버튼을 클릭하여 애플리케이션 URL을 확인하고 브라우저에서 접속합니다.
 
 ## 4. Watson Conversation Tool 실습
 
@@ -184,14 +203,17 @@ api_endpoint의 url은 리전별로 다릅니다.
 캘린더봇에 schedule_add 인텐트를 추가합니다.
 1. 직관적으로 ``일정 추가해줘``라고 말할 수도 있고 간접적으로 ``금요일에 영화 예매해놨어 남친이랑 볼꺼야``라고 말할 수도 있습니다.
 1. 캘린더 봇은 직관적이던 간접적이던 그 말의 목적이 ``스케줄의 추가`` 내지 ``스케줄의 기억``이라면 하나의 Intent로 정의할 1. 있습니다. ``창문 좀 닫아줘``와 ``좀 춥지 않아?``는 전혀 다른 의미이지만 상황에 따라서 같은 Intent가 될 수도 있습니다.
-1. 인텐트 이름으로 ``schedule_add``를 입력합니다. 최소 10개 이상의 사용자 메세지 예시를 입력하십시오.
+1. 인텐트 이름으로 ``schedule_add``를 입력합니다. 최소 20개 이상의 사용자 메세지 예시를 입력하십시오.
 1. 예시 : 
         * 내일 업체랑 미팅 있어
         * 일정 추가해줘
+        * 스케줄 추가 해줘
         * 토요일에 회사 사람들이랑 등산가 ㅠ.ㅠ
         * 금요일 점심은 상무님이랑 먹기로 했어
         * 내일은 엄마, 아빠랑 집에서 저녁 먹을꺼야
         * 다음 주 수요일 친구랑 약속 있는데 추가좀
+        * 오늘 저녁에 엄마랑 영화 보기로 했어
+        * 다음주 토요일에 동창회가 잡혔네
 1. 사용자의 메세지에는 오타가 있을 수도 있고 제대로 된 띄어 쓰기가 없을 수도 있습니다. 이러한 것들이 모두 학습되어야 더 정확한 챗봇이 만들어질 수 있습니다.
 
 ### 4.2 Entity 추가
@@ -204,7 +226,7 @@ api_endpoint의 url은 리전별로 다릅니다.
     * Value Type으로 Patterns를 선택하면 정규식을 사용하여 엔티티를 정의할 수 있습니다. 이 방식은 적은 노력으로 비교적 많은 엔티티를 추출할 수 있지만 룰 기반의 추출 방식이기에 트레이닝 및 교정은 불가능합니다.
 1. 우리가 장소를 지칭할 때에 자주 사용하는 패턴은 ``~에서`` 입니다. 이 패턴을 정규식으로 추가합니다.
     * 예) 이번 송년회는 강남에서 한대
-    * Value에 ``장소_패턴``을 입력하고 Type으로 ``Patterns``를 선택, ``Add patterns``란에 ``[가-힣]+에서``를 입력합니다.
+    * Value에 ``장소_패턴``을 입력하고 Type으로 ``Patterns``를 선택, ``Add patterns``란에 <pre>[가-힣]+에서</pre>를 입력합니다.
 1. 하지만 ``~에서`` 표현을 항상 사용하는 것은 아닙니다. 자주 사용될 장소를 Synonims 방식으로 추가해 줍니다.
     * 예) 고등학교 동창 송년회 강남
     * Value에 ``핫플레이스``를 입력하고 Type으로 ``Synonims``를 선택, ``Add synonims``란에 ``홍대``, ``합정``, ``강남``, ``이태원``, ``명동`` 등을 입력합니다. 
@@ -217,7 +239,7 @@ api_endpoint의 url은 리전별로 다릅니다.
 shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 1. ``Add node`` 버튼으로 새로운 노드를 생성합니다.
 1. ``If bot recognizes``에 #schedule_add를 입력합니다. (#은 인텐트를 가리키는 prefix입니다.)
-1. 스케줄을 추가할 때에 필요한 값들을 사용자로부터 얻기 위해 Slot을 활성화 합니다.
+1. 스케줄을 추가할 때에 필요한 값들을 사용자로부터 얻기 위해 Slot을 활성화 하는 단계입니다. Slot을 사용하면 필요한 값을 모두 얻었을 때에 해당 노드의 Response를 반환합니다.
     * 노드 구성 화면의 우측 상단에 있는 ``Customize`` 버튼을 눌러 Slot을 활성화 합니다. ``Prompt for everything ``체크박스를 선택합니다. 
 
         ![Customize Button](readme_images/customize_btn.png)
@@ -226,7 +248,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
     * ``Apply`` 버튼을 누릅니다.
 1. ``Then check for``에 Slot을 설정합니다.
 
-    * 이 애플리케이션에서는 스케줄을 추가할 때에 Context로부터 다음의 값을 사용합니다.
+    * 이 애플리케이션에서는 스케줄을 추가할 때에 Context로부터 다음의 값을 저장하여 사용합니다.
 
         | 필드 이름 | 필수 여부 |
         | :---: | :---: |
@@ -250,9 +272,9 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
         @place.literal | $place |  |
         @action.literal | $action | 뭘 하실 예정이세요? |
 
-1. 일부 슬롯에 대해서 엔티티 대신 인풋 전체를 사용하여 값을 저장하도록 설정합니다.
+1. 일부 슬롯에 대해서 사용자에게 값을 물었을 때 엔티티가 추출되지 않더라도 사용자 메세지 전체를 사용하여 값을 저장하도록 설정하는 단계입니다.
     * 해당 기능을 설정할 슬롯은 people과 action 입니다. 두 슬롯에 대해서 다음의 과정을 반복하십시오.
-        * 슬롯 우측에 위치한 설정 버튼을 클릭합니다.
+        * 설정하려는 슬롯 우측에 위치한 설정 버튼을 클릭합니다.
 
             ![icon-menu](readme_images/setting_icon.png)
 
@@ -261,8 +283,8 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
             ![icon-menu](readme_images/menu_icon.png)
 
         * 스크롤을 내려 엔티티가 추출된 경우와 추출되지 않은 경우에 나누어 응답을 설정합니다.
-            * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 ``<? $people ?> 만나시는군요.``를 입력합니다. (aciton 슬롯을 설정할 때에는 ``<? $action ?> 할 예정이시군요.`` 를 입력합니다.) 
-            * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
+            * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 <pre>\<? $people ?\> 만나시는군요.</pre>를 입력합니다. (aciton 슬롯을 설정할 때에는 <pre>\<? $action ?\> 할 예정이시군요.</pre> 를 입력합니다.) 
+            * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
                 * people
                     <pre>
                         {
@@ -297,7 +319,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
                             }
                         }
                     </pre>
-1. 이제 전체 노드의 응답을 설계합니다. 이 응답은 필요한 Slot의 값을 모두 얻었을 때에 리턴됩니다. 노드 설정 화면에서 스크롤을 내려 ``Then respond with:``로 가십시오. 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``If bot recognizs``란은 비워둡니다. ``Then response with``란에 다음 JSON을 입력하고 저장하십시오.
+1. 이제 전체 노드의 응답을 설계합니다. 이 응답은 필요한 Slot의 값을 모두 얻었을 때에 리턴됩니다. 노드 설정 화면에서 스크롤을 내려 ``Then respond with:``로 가십시오. 우측에 위치한 메뉴 아이콘을 클릭합니다. 다음 JSON을 입력하십시오.
     <pre>
         {
             "context": {
@@ -305,10 +327,10 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
             },
             "output": {
                 "text": {
-                "values": [
-                    "$people $place $action 약속 일정 캘린더에 추가하겠습니다~"
-                ],
-                "selection_policy": "sequential"
+                    "values": [
+                        "$people $place $action 약속 일정 캘린더에 추가하겠습니다~"
+                    ],
+                    "selection_policy": "sequential"
                 }
             }
         }
@@ -318,7 +340,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 노드 하나의 작성을 마쳤습니다. 전체 노드의 응답에서 context의 command 값으로 add_event를 저장했습니다. 애플리케이션은 이 명령을 확인하고 실제 캘린더에 이벤트를 저장합니다. 애플리케이션이 $data.add_event_result에 결과를 저장된 채로 하위 노드를 호출합니다. 이제 하위 노드를 작성합니다.
 
 1. 이전 단계에서 작성한 노드의 메뉴 버튼을 눌러 ``Add child node를`` 클릭합니다.
-1. 자식 노드의 ``If bot recognizes:`` 란에 ``$data and $data.add_event_result``를 입력합니다.
+1. 자식 노드의 ``If bot recognizes:`` 란에 <pre>$data and $data.add_event_result</pre>를 입력합니다.
 1. ``Then respond with:`` 란의 우측에 위치한 메뉴 아이콘을 눌러 ``Open JSON editor``를 클릭합니다.
 1. 다음의 JSON을 입력하십시오.
     <pre>
@@ -345,7 +367,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 **Conversation Tool**의 우측 상단에 위치한 메세지 아이콘을 클릭하면 작성중인 워크스페이스를 테스트 할 수 있습니다.
 
 ### 4.5 캘린더봇 테스트
-[이전 단계](14-애플리케이션-실행)에서 방문했던 앱 url을 방문하여 테스트 하십시오. 캘린더봇에게 다음의 질문을 던져보세요.
+[이전 단계](#34-애플리케이션-실행)에서 방문했던 앱 url을 방문하여 테스트 하십시오. 캘린더봇에게 다음의 질문을 던져보세요.
 * 오늘 뭐하지? (추천 기능은 오늘 아무런 일정도 없는 경우에만 실행됩니다. 이 기능을 테스트 하려면 구글 캘린더의 오늘 일정을 모두 삭제하신 후 진행하십시오.)
 * 오늘 일정 알려줘
 * 오늘 저녁에 엄마랑 집에서 홈쇼핑 하기로 했어
