@@ -16,6 +16,8 @@
 
 'use strict';
 
+const credentials = require('../../util/service_credentials');
+
 /*
  * Cloudant DB Module
  */
