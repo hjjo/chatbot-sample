@@ -6,9 +6,6 @@ declared-services:
   natural-language-understanding-service:
     label: natural-language-understanding
     plan: free
-  weather-service:
-    label: weatherinsights
-    plan: Free-v2
   cloudant-service:
     label: cloudantNoSQLDB
     plan: Lite
@@ -21,7 +18,6 @@ applications:
   services:
   - conversation-service
   - natural-language-understanding-service
-  - weather-service
   - cloudant-service
   env:
     CLOUDANT_CONTEXT_DB: "calendarbot_context"

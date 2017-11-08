@@ -39,25 +39,30 @@ let getWeatherData = () => {
     };
 
     return new Promise((resolved, rejected) => {
-        request(reqOption, (err, res, body) => {
-            if(!err){
-                body = JSON.parse(body);
+        if(credentials.twc.url){
+             request(reqOption, (err, res, body) => {
+                if(!err){
+                    body = JSON.parse(body);
 
-                let forecasts = body.forecasts;
-                let weather = [];
-                forecasts.forEach((forecast) => {
-                    weather.push({
-                        'day' : forecast.day? forecast.day.phrase_32char : undefined,
-                        'night' : forecast.night? forecast.night.phrase_32char : undefined
+                    let forecasts = body.forecasts;
+                    let weather = [];
+                    forecasts.forEach((forecast) => {
+                        weather.push({
+                            'day' : forecast.day? forecast.day.phrase_32char : undefined,
+                            'night' : forecast.night? forecast.night.phrase_32char : undefined
+                        });
                     });
-                });
 
-                resolved(weather)
-            }
-            else{
-                resolved([])
-            }
-        })
+                    resolved(weather)
+                }
+                else{
+                    resolved([])
+                }
+            })
+        }
+        else{
+            resolved([])
+        }
     })
 }
 
@@ -139,7 +144,7 @@ let recommend = (context) => {
                 let recommendation = recommendations[index];
                 
                 recommendation.availability = true;
-                if(recommendation.affectedBy.weather){
+                if(recommendation.affectedBy.weather && weather.length > 0){
                     let curruntWeather = weather[0].day ? weather[0].day : weather[0].night
                     if(curruntWeather.toLowerCase().indexOf('rain') >= 0){
                         recommendation.availability = false;

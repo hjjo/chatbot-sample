@@ -49,7 +49,7 @@
 ## 사전 준비 사항
 
 * IBM Cloud의 계정을 생성합니다.
-    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/)하거나 갖고 계신 계정을 사용하십시오. 계정에 512MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
+    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/?target=%2Fdashboard%2Fapps)하거나 갖고 계신 계정을 사용하십시오. 계정에 512MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
 * 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
     * [Node.js 런타임 및 npm 패키지 매니저 설치](https://nodejs.org/#download)
 * 로컬에서 변경한 애플리케이션을 IBM Cloud에 배포하려면 CLI(Command Line Interface)를 설치합니다.
@@ -69,6 +69,10 @@
 
 ## 1. IBM Cloud에 배포하기
 [이 링크를 클릭하여 애플리케이션을 IBM Cloud에 배포합니다.](https://bluemix.net/deploy?repository=https://github.com/hjjo/chatbot-sample.git)
+
+애플리케이션 배포가 시작되면 [3. Conversation의 Workspace 및 IBM Cloud 환경 변수 설정](#3-conversation의-workspace-및-ibm-cloud-환경-변수-설정)을 시작하십시오. 
+
+이 링크를 통한 애플리케이션 배포에 어려움이 있는 경우 [2.로컬에서 실행하기](#2-로컬에서-실행하기)의 방법으로 애플리케이션을 배포합니다.
 
 ## 2. 로컬에서 실행하기
 
@@ -252,7 +256,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
         * 팝업 우측 상단에 위치한 메뉴 아이콘을 선택하여 ``Enable conditional responses``를 선택합니다.
 
             ![icon-menu](readme_images/menu_icon.png)
-            
+
         * 스크롤을 내려 엔티티가 추출된 경우와 추출되지 않은 경우에 나누어 응답을 설정합니다.
             * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 ``<? $people ?> 만나시는군요.``를 입력합니다. (aciton 슬롯을 설정할 때에는 ``<? $action ?> 할 예정이시군요.`` 를 입력합니다.) 
             * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
