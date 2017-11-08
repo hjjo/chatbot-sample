@@ -57,21 +57,27 @@ if(process.env.VCAP_SERVICES){
     let services = JSON.parse(process.env.VCAP_SERVICES);
 
     //cloudant
-    credentials.cloudant.url = services.cloudantNoSQLDB[0].credentials.url;
-
+    if(services.cloudantNoSQLDB){
+        credentials.cloudant.url = services.cloudantNoSQLDB[0].credentials.url;
+    }
+    
     //conversation
-    let wcs = services.conversation[0].credentials;
-    credentials.conversation.username = wcs.username;
-    credentials.conversation.password = wcs.password;
-    credentials.conversation.workspace_id = process.env.WORKSPACE_ID;
-
+    if(services.conversation){
+        let wcs = services.conversation[0].credentials;
+        credentials.conversation.username = wcs.username;
+        credentials.conversation.password = wcs.password;
+        credentials.conversation.workspace_id = process.env.WORKSPACE_ID;
+    }
     //nlu
-    let nlu = services["natural-language-understanding"][0].credentials;
-    credentials.nlu.username = nlu.username;
-    credentials.nlu.password = nlu.password;
-
+    if(services["natural-language-understanding"]){
+        let nlu = services["natural-language-understanding"][0].credentials;
+        credentials.nlu.username = nlu.username;
+        credentials.nlu.password = nlu.password;
+    }
     //twc
-    credentials.twc.url = services.weatherinsights[0].credentials.url;
+    if(services.weatherinsights){
+        credentials.twc.url = services.weatherinsights[0].credentials.url;
+    }
 }
 
 module.exports = credentials;

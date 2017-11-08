@@ -76,7 +76,7 @@
 
 ## 2. 로컬에서 실행하기
 
-**(이 단계는 이번 실습 세션에서는 진행하지 않으셔도 됩니다. 1번을 완료하신 경우 3번으로 가십시오.)**
+**(이 단계는 이번 실습 세션에서는 진행하지 않으셔도 됩니다. 1번을 통해 배포를 완료하신 경우 3번으로 가십시오.)**
 
 이 앱을 베이스로 하여 수정 및 새로운 앱을 개발하고자 하는 경우 로컬에 설치할 수 있습니다. 수정한 앱 버전을 다시 IBM Cloud로 배포할 수 있습니다.
 
@@ -95,13 +95,17 @@ Cloudant NoSQL DB | cloudantNoSQLDB | Lite | cloudant-service
 
 #### CLI 명령으로 서비스 생성하는 방법
 커맨드 창을 열어 소스코드의 프로젝트 루트 경로로 이동합니다.
-CLI를 통해 서비스를 생성하는 경우 먼저 다음 명령을 사용하여 로그인 하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_login)를 참조하세요.
+CLI를 통해 서비스를 생성하는 경우 먼저 다음 명령을 참조하여 로그인 하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_login)를 참조하세요.
 > bx login [-a api_endpoint]
 
 api_endpoint의 url은 리전별로 다릅니다.
-    * US South : api.ng.bluemix.net
-    * UK : api.eu-gb.bluemix.net
-    * Sydney : api.au-syd.bluemix.net
+
+    US South : api.ng.bluemix.net
+    UK : api.eu-gb.bluemix.net
+    Sydney : api.au-syd.bluemix.net
+
+만약 US South를 사용한다면 다음 명령을 사용하면 됩니다.
+> bx login -a api.ng.bluemix.net
 
 다음 명령을 통해 애플리케이션을 배포할 조직과 스페이스를 설정합니다. ORG에는 조직 이름을, SPACE에는 스페이스 이름을 입력하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_target)를 확인하십시오.
 > bx target --cf
