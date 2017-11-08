@@ -12,12 +12,17 @@
 * IBM Watson Natural Language Undersatanding 및 The Weather Company Data 서비스를 애플리케이션에서 활용
 * 구글 캘린더 API 및 tinyurl의 Url Shorten 기능을 애플리케이션에서 사용
 
-[Flow 아키텍쳐 그림 여기에]
+    ![아키텍쳐 및 플로우](readme_images/flow.png)
 
 ## Flow
-1.
-1.
-1.
+1. 사용자는 다양한 인터페이스를 통해 캘린더봇을 사용합니다. 실습 과정에서는 웹 애플리케이션 및 카카오톡 메신저 플랫폼을 사용합니다.
+1. 모든 인터페이스는 사용자와 애플리케이션 사이의 매개체 역할을 합니다. 사용자의 메세지를 애플리케이션에 전달하고 응답을 다시 사용자에게 전달합니다.애플리케이션은 Node.js 런타임 기반으로 개발되었습니다. 애플리케이션은 필요한 기능을 수행하기 위해 다른 서비스들을 호출하거나 자체적인 로직을 수행합니다.
+1. 애플리케이션은 사용자가 메세지를 전송할 때마다 Watson Conversation 서비스를 호출하여 이 다음에 수행할 로직 및 응답 메세지를 추출합니다.
+1. 애플리케이션은 필요에 따라 Natural Language Understanding 서비스를 활용하여 텍스트로부터 메타데이터를 추출합니다. 이 애플리케이션은 사용자에게 오늘 하면 좋은 액티비티를 추천하기 위해 사용자의 과거 캘린더 데이터를 조회 및 분석합니다.
+1. 날씨 데이터를 얻기 위해 The Weather Company Data를 활용합니다. 사용자에게 액티비티를 추천할 때에 날씨의 영향을 받는 액티비티는 제외하기 위해 날씨 데이터를 활용합니다.
+1. 사용자의 문맥 정보 및 로그를 클라우던트에 저장합니다.
+1. 사용자의 일정을 조회 및 생성하기 위해 Google Calendar API를 사용합니다. 
+1. 때로는 Google Calendar API를 사용할 때에 너무 긴 URL을 사용자에게 보여줄 필요가 있습니다. 이 경우를 대비해 TinyURL을 사용하여 짧은 URL을 사용하여 사용자에게 보여줍니다.
 
 ## 포함된 구성 요소
 * [IBM Watson Conversation](https://www.ibm.com/watson/developercloud/conversation.html): 자연어를 이해하고 기계 학습(Machine learning)을 사용하여 고객과 소통할 때 사람이 하는 대화 방식으로 응답하는 어플리케이션을 만들 수 있도록 모든 기능을 제공해주는 서비스 입니다.
@@ -27,11 +32,11 @@
 * [The Weather Company Data]
 
 ## 사용된 기술
-* [Node.js](https://nodejs.org/): An asynchronous event driven JavaScript runtime, designed to build scalable applications.
+* [Node.js](https://nodejs.org/): 자바스크립트 기반의 런타임으로 확장성 있는 애플리케이션을 개발할 수 있습니다.
 
-* [Google Calendar API](https://developers.google.com/google-apps/calendar/)
+* [Google Calendar API](https://developers.google.com/google-apps/calendar/) : 구글 캘린더와 연동하기 위한 API를 제공합니다.
 
-* [tinyurl]
+* [tinyurl](https://www.npmjs.com/package/tinyurl) : 간편한 URL Shorten API를 제공합니다.
 
 # 실습
 
@@ -129,11 +134,16 @@ api_endpoint의 url은 리전별로 다릅니다.
 1. 서비스 목록에서 conversation-service를 선택합니다.
 1. ``Launch Tool`` 버튼을 눌러 **Conversation Tool**을 오픈합니다. 이 링크를 기억해 두십시오. 
 1. Conversation Tool에서 ``Import a workspace`` 아이콘을 선택하십시오. 아래와 같이 생겼습니다.
-    [아이콘 이미지 삽입]
+
+    ![Icon image to import a workspace](readme_images/import_workspace_icon.png)
+
 1. 애플리케이션 소스코드의 /training/calendar_bot_workspace.json 파일을 선택합니다.
     `<project_root>/training/calendar_bot_workspace.json`
 1. ``Everything (Intents, Entities, and Dialog)``를 선택하고 ``Import`` 버튼을 눌러 워크스페이스를 생성합니다.
 1. 생성된 워크스페이스의 카드 우측 상단에 위치한 아이콘을 눌러 ``View Details``를 선택합니다.
+
+    ![Workspace detail](readme_images/workspace_detail.png)
+
 1. ``Workspace ID``를 복사하여 기록해 둡니다.
 1. IBM Cloud의 [대시보드](https://console.bluemix.net/dashboard)에서 애플리케이션을 선택합니다. ROUTE가 아닌 NAME 부분을 클릭하십시오.
 1. 좌측 메뉴에서 ``Runtime``을 선택합니다.
@@ -202,6 +212,9 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 1. ``If bot recognizes``에 #schedule_add를 입력합니다. (#은 인텐트를 가리키는 prefix입니다.)
 1. 스케줄을 추가할 때에 필요한 값들을 사용자로부터 얻기 위해 Slot을 활성화 합니다.
     * 노드 구성 화면의 우측 상단에 있는 ``Customize`` 버튼을 눌러 Slot을 활성화 합니다. ``Prompt for everything ``체크박스를 선택합니다. 
+
+        ![Customize Button](readme_images/customize_btn.png)
+
     * 응답을 다양하게 설정하려면 ``Multiple responses``를 활성화 하십시오.
     * ``Apply`` 버튼을 누릅니다.
 1. ``Then check for``에 Slot을 설정합니다.
@@ -233,7 +246,13 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 1. 일부 슬롯에 대해서 엔티티 대신 인풋 전체를 사용하여 값을 저장하도록 설정합니다.
     * 해당 기능을 설정할 슬롯은 people과 action 입니다. 두 슬롯에 대해서 다음의 과정을 반복하십시오.
         * 슬롯 우측에 위치한 설정 버튼을 클릭합니다.
+
+            ![icon-menu](readme_images/setting_icon.png)
+
         * 팝업 우측 상단에 위치한 메뉴 아이콘을 선택하여 ``Enable conditional responses``를 선택합니다.
+
+            ![icon-menu](readme_images/menu_icon.png)
+            
         * 스크롤을 내려 엔티티가 추출된 경우와 추출되지 않은 경우에 나누어 응답을 설정합니다.
             * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 ``<? $people ?> 만나시는군요.``를 입력합니다. (aciton 슬롯을 설정할 때에는 ``<? $action ?> 할 예정이시군요.`` 를 입력합니다.) 
             * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
