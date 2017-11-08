@@ -19,10 +19,17 @@
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const tinyurl = require('tinyurl');
-const googleCred = require('../../client_secret.json');
+const googleCred;
 const cloudant = require('../../util/db');
 const db = cloudant.db['context'];
 const moment = require('moment');
+
+try{
+    googleCred = require('../../client_secret.json');
+}
+catch (ex) {
+    //Do nothing.
+}
 
 if(!googleCred){
     googleCred = {
