@@ -21,7 +21,7 @@
  */
 
 let cloudant = require('cloudant')({
-    'url': process.env.CLOUDANT_URL,
+    'url': credentials.cloudant.url,
     'plugin': 'promises'
 });
 
