@@ -112,10 +112,10 @@ api_endpoint의 url은 리전별로 다릅니다.
 
 이제 서비스와 서비스 키를 각각 생성합니다. 
 
-/scripts/install.sh 스크립트를 활용하거나
+/scripts/install.sh 스크립트를 활용하여 한번에 생성하거나
 > sh scripts/install.sh
 
-아래 명령을 활용하여 수동으로 생성하십시오.
+또는 아래 명령을 활용하여 수동으로 생성하십시오.
 > bx service create <서비스 타입명> <플랜> <서비스 이름>
 > bx service key-create <서비스 이름> <키 이름>
 

@@ -19,7 +19,7 @@
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const tinyurl = require('tinyurl');
-const googleCred;
+var googleCred;
 const cloudant = require('../../util/db');
 const db = cloudant.db['context'];
 const moment = require('moment');
