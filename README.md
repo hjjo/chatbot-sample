@@ -4,7 +4,7 @@
 
 이 애플리케이션은 IBM Watson Conversation을 활용하고자 하는 개발자를 위해 개발되었습니다. 이 애플리케이션은 "오늘 뭐하지?" 라는 단순한 질문에 대한 아이디어에서 시작하였으며 IBM Watson Natural language Understanding 및 The Weather Company Data를 활용하여 사용자의 최근 액티비티, 날씨 정보 등을 기반으로 사용자에게 오늘 할 수 있는 활동을 추천합니다.
 
-이 애플리케이션은 [Conversation Simple](conversation_simple)을 기반으로 수정하여 개발했으며 [데모 링크][demo_url]에서 테스트할 수 있습니다.
+이 애플리케이션은 [Conversation Simple](conversation_simple)을 기반으로 수정하여 개발했으며 [데모 링크][demo_url]에서 테스트할 수 있습니다. 혹은 카카오톡 플러스친구 ``캘린더봇``을 추가하여 테스트할 수 있습니다.
 
 이 애플리케이션의 구성을 이해하고 튜토리얼을 마치면 다음을 이해할 수 있습니다.
 * Node.js 기반의 챗봇 애플리케이션 개발
@@ -37,7 +37,8 @@
 
 1. [사전 준비 사항](#사전-준비-사항)을 먼저 완료하십시오.
 1. 애플리케이션을 [IBM Cloud에 바로 배포](#1-ibm-cloud에-배포하기)하거나 [로컬에서 실행](#2-로컬에서-실행하기)합니다.
-1. [Watson Conversation Tool 실습](#3-Watson-Conversation-Tool-실습)을 통해 챗봇을 완성합니다.
+1. [Conversation의 워크스페이스를 설정](3-Conversation의-Workspace-설정-및-IBM-Cloud-환경-변수-설정)하고 애플리케이션에 필요한 환경 변수를 수정합니다.
+1. [Watson Conversation Tool 실습](#4-Watson-Conversation-Tool-실습)을 통해 챗봇을 완성합니다.
 1. 챗봇을 [카카오톡과 연동](#4-카카오톡과-연동하기)합니다.
 
 ## 사전 준비 사항
@@ -55,7 +56,7 @@
         - ``사용자 인증 정보``탭에서 ``사용자 인증 정보 만들기`` 버튼을 클릭하여 ``OAuth 클라이언트 ID``를 선택합니다.
         - 애플리케이션 유형으로 ``기타``를 선택하고 이름에 ``Tutorial``을 입력합니다. ``생성`` 버튼을 누릅니다.
         - 팝업에서 클라이언트 ID와 Password를 복사하여 기록해둡니다.
-        - 팝업을 종료하고 ``JSON 다운로드`` 아이콘을 클릭하여 JSON을 다운로드 합니다. 이 파일을 client_secret.json으로 저장합니다.
+        - 팝업을 종료하고 ``JSON 다운로드`` 아이콘을 클릭하여 JSON을 다운로드 합니다. 이 파일을 소스코드의 루트 폴더에 client_secret.json으로 저장합니다.
 * 카카오톡과 챗봇을 연동하려면 카카오톡 플러스친구를 생성하십시오.
     * [카카오톡 플러스 친구 생성](https://center-pf.kakao.com)
 * 애플리케이션의 소스코드를 다운로드 합니다.
@@ -64,7 +65,65 @@
 ## 1. IBM Cloud에 배포하기
 [이 링크를 클릭하여 애플리케이션을 IBM Cloud에 배포합니다.](https://bluemix.net/deploy?repository=https://github.com/hjjo/chatbot-sample.git)
 
-### 1.1 Conversation의 Workspace 설정
+## 2. 로컬에서 실행하기
+
+**(이 단계는 이번 실습 세션에서는 진행하지 않으셔도 됩니다. 1번을 완료하신 경우 3번으로 가십시오.)**
+
+이 앱을 베이스로 하여 수정 및 새로운 앱을 개발하고자 하는 경우 로컬에 설치할 수 있습니다. 수정한 앱 버전을 다시 IBM Cloud로 배포할 수 있습니다.
+
+### 2.1 필요한 서비스 생성
+[IBM Cloud 카탈로그](https://console.bluemix.net/catalog) 또는 CLI 명령을 통해 다음의 서비스를 생성합니다. 서비스 이름은 manifest.yml에 명시되어 있기에 반드시 같은 이름으로 생성해야 배포가 가능합니다. 
+
+| 서비스 카탈로그상 이름 | 서비스 타입명 | 플랜 | 서비스 이름 |
+| :---: | :---: | :---: | :---: |
+Conversation | conversation | free | conversation-service
+Natural Language Understanding | natural-language-understanding | free | natural-language-understanding-service
+Weather Company Data | weatherinsights | Free-v2 | weather-service
+Cloudant NoSQL DB | cloudantNoSQLDB | Lite | cloudant-service
+
+#### 카탈로그 UI에서 서비스 생성하는 방법
+[IBM Cloud 카탈로그](https://console.bluemix.net/catalog)에서 ``서비스 카탈로그상 이름``으로 서비스를 검색합니다. 
+서비스 이름은 반드시 표를 참조하여 입력하십시오.
+
+#### CLI 명령으로 서비스 생성하는 방법
+커맨드 창을 열어 소스코드의 프로젝트 루트 경로로 이동합니다.
+CLI를 통해 서비스를 생성하는 경우 먼저 다음 명령을 사용하여 로그인 하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_login)를 참조하세요.
+> bx login [-a api_endpoint]
+
+api_endpoint의 url은 리전별로 다릅니다.
+    * US South : api.ng.bluemix.net
+    * UK : api.eu-gb.bluemix.net
+    * Sydney : api.au-syd.bluemix.net
+
+다음 명령을 통해 애플리케이션을 배포할 조직과 스페이스를 설정합니다. ORG에는 조직 이름을, SPACE에는 스페이스 이름을 입력하십시오. 자세한 내용은 [링크](https://console.bluemix.net/docs/cli/reference/bluemix_cli/bx_cli.html#bluemix_target)를 확인하십시오.
+> bx target --cf
+
+이제 서비스와 서비스 키를 각각 생성합니다. 
+
+/scripts/install.sh 스크립트를 활용하거나
+> sh scripts/install.sh
+
+아래 명령을 활용하여 수동으로 생성하십시오.
+> bx service create <서비스 타입명> <플랜> <서비스 이름>
+> bx service key-create <서비스 이름> <키 이름>
+
+### 2.2 로컬에서 실행
+**(이 단계는 이번 실습 세션에서는 진행하지 않으셔도 됩니다. 2.1번을 완료하신 경우 2.3번으로 가십시오.)**
+
+로컬에서 실행하려면 환경 변수를 셋팅해야 합니다. 예제 파일로부터 환경 변수를 저장할 파일을 생성합니다.
+> cp .env.example .env
+
+.env 파일의 환경변수를 각 서비스의 Credential 값으로 채워줍니다.
+
+앱을 설치하고 실행합니다.
+> npm install
+> npm start
+
+### 2.3 IBM Cloud에 배포
+다음 명령으로 앱을 IBM Cloud에 배포합니다.
+> bx app push
+
+## 3. Conversation의 Workspace 및 IBM Cloud 환경 변수 설정
 
 1. IBM Cloud의 [대시보드](https://console.bluemix.net/dashboard)에 접속합니다. 애플리케이션 배포시 설정했던 Region, Organization 및 Space를 올바르게 선택합니다.
 1. 서비스 목록에서 conversation-service를 선택합니다.
@@ -80,23 +139,17 @@
 1. 좌측 메뉴에서 ``Runtime``을 선택합니다.
 1. ``Environment Variables`` 탭을 선택하고 스크롤을 아래로 내립니다. User Defind라고 명시된 환경변수 항목들이 보입니다. 이 항목들 중에서 WORKSPACE_ID의 VALUE 값을 위에서 복사해둔 값으로 변경합니다.
 
-### 1.2 구글 캘린더 API 설정
+### 3.2 구글 캘린더 API 설정
 애플리케이션 대시보드의 Runtime 페이지에 있는 ``Environment Variables`` 탭에서 계속 진행하십시오.
 1. GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET의 VALUE 값을 사전 준비사항에서 기록해둔 값으로 변경합니다.
 
-### 1.3 애플리케이션 재시작
+### 3.3 애플리케이션 재시작
 애플리케이션 대시보드에서 변경한 환경 변수를 반영하기 위해 애플리케이션을 재시작 하십시오. 
 
-### 1.4 애플리케이션 실행
+### 3.4 애플리케이션 실행
 ``Visit App URL`` 버튼을 클릭하여 애플리케이션을 실행합니다.
 
-## 2. 로컬에서 실행하기
-
-**(이 단계는 이번 실습 세션에서는 진행하지 않습니다.)**
-
-이 앱을 베이스로 하여 수정 및 새로운 앱을 개발하고자 하는 경우 로컬에 설치할 수 있습니다. 수정한 앱 버전을 다시 IBM Cloud로 배포할 수 있습니다.
-
-## 3. Watson Conversation Tool 실습
+## 4. Watson Conversation Tool 실습
 
 위 단계에서 Import한 /training/calendar_bot_workspace.json 파일은 이 애플리케이션의 주요 기능중 하나인 schedule 추가 기능을 직접 개발하도록 의도된 워크스페이스 입니다. Import한 워크스페이스를 시작점으로 하여 캘린더 봇을 완성해 봅니다.
 
@@ -108,7 +161,7 @@
 
 **Conversation Tool**에서 캘린더봇 워크스페이스를 오픈합니다.
 
-### 3.1 Intent 추가 
+### 4.1 Intent 추가 
 캘린더봇 워크스페이스에서 ``Intents`` 탭을 선택합니다. ``Create new`` 버튼으로 새로운 인텐트를 생성할 수 있습니다. csv파일로부터 Import하거나 Export할 수도 있습니다. 
 
 캘린더봇에 schedule_add 인텐트를 추가합니다.
@@ -124,7 +177,7 @@
         * 다음 주 수요일 친구랑 약속 있는데 추가좀
 1. 사용자의 메세지에는 오타가 있을 수도 있고 제대로 된 띄어 쓰기가 없을 수도 있습니다. 이러한 것들이 모두 학습되어야 더 정확한 챗봇이 만들어질 수 있습니다.
 
-### 3.2 Entity 추가
+### 4.2 Entity 추가
 워크스페이스에서 ``Entities`` 탭을 선택합니다. ``Create new`` 버튼으로 새로운 엔티티를 생성할 수 있습니다. 
 
 스케줄을 추가할 때에 사용하는 Entity 중에 장소에 해당하는 place 엔티티를 생성합니다. 
@@ -141,7 +194,7 @@
     * Value에 ``자주 가는 곳``을 입력하고 Type으로 ``Synonims``를 선택, ``Add synonims``란에 ``집``, ``회사``등을 입력합니다. 
 1. 오타, 줄임말로 인한 단어도 추가하면 정확도를 높일 수 있습니다.
 
-### 3.3 Dialog 작성
+### 4.3 Dialog 작성
 워크스페이스에서 ``Dialog`` 탭을 선택합니다. ``Add node`` 버튼으로 새로운 노드를 생성할 수 있습니다. 다이얼로그는 사용자가 메세지를 보냈을 때, 사용자의 메세지로부터 인텐트 및 엔티티를 추출한 뒤에 챗봇의 응답을 설계하는 과정입니다. 이 과정은 룰 기반으로 이루어지며 구성된 노드를 위에서 아래로, 왼쪽에서 오른쪽으로 탐색하면서 조건(If bot recognizes)이 맞으면 해당 노드를 실행합니다.
 
 shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
@@ -152,24 +205,31 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
     * 응답을 다양하게 설정하려면 ``Multiple responses``를 활성화 하십시오.
     * ``Apply`` 버튼을 누릅니다.
 1. ``Then check for``에 Slot을 설정합니다.
+
     * 이 애플리케이션에서는 스케줄을 추가할 때에 Context로부터 다음의 값을 사용합니다.
-        **필드 이름**   **필수 여부**
-        startDate   required
-        endDate     optional
-        startTime   optional
-        endTime     optional
-        people      required
-        place       optional
-        action      required
+
+        | 필드 이름 | 필수 여부 |
+        | :---: | :---: |
+        startDate | required |
+        endDate | optional |
+        startTime | optional |
+        endTime | optional |
+        people | required |
+        place | optional |
+        action | required |
+        
     * 슬롯을 다음과 같이 설정하십시오. **If not present, ask** 필드를 입력하면 필수 항목, 입력하지 않으면 선택 항목으로 구분됩니다.
-        **Check for**   **Save it as**  **If not present, ask**
-        @sys-date       $startDate      언제 해당 일정이 있으세요?
-        @sys-date       $endDate
-        @sys-time       $startTime
-        @sys-time       $endTime
-        @people.literal $people         어떤 분과 만나세요?
-        @place.literal  $place
-        @action.literal $action         뭘 하실 예정이세요?
+
+        | Check for | Save it as | If not present, ask |
+        | :---: | :---: | :--- |
+        @sys-date | $startDate | 언제 해당 일정이 있으세요? |
+        @sys-date | $endDate |  |
+        @sys-time | $startTime |  |
+        @sys-time | $endTime |  |
+        @people.literal | $people | 어떤 분과 만나세요? |
+        @place.literal | $place |  |
+        @action.literal | $action | 뭘 하실 예정이세요? |
+
 1. 일부 슬롯에 대해서 엔티티 대신 인풋 전체를 사용하여 값을 저장하도록 설정합니다.
     * 해당 기능을 설정할 슬롯은 people과 action 입니다. 두 슬롯에 대해서 다음의 과정을 반복하십시오.
         * 슬롯 우측에 위치한 설정 버튼을 클릭합니다.
@@ -177,86 +237,95 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
         * 스크롤을 내려 엔티티가 추출된 경우와 추출되지 않은 경우에 나누어 응답을 설정합니다.
             * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 ``<? $people ?> 만나시는군요.``를 입력합니다. (aciton 슬롯을 설정할 때에는 ``<? $action ?> 할 예정이시군요.`` 를 입력합니다.) 
             * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
-                ** people
-                    {
-                        "conditions": "true",
-                        "output": {
-                            "text": {
-                            "values": [
-                                "<? input.text ?> 만나시는 군요."
-                            ],
-                            "selection_policy": "sequential"
+                * people
+                    <pre>
+                        {
+                            "conditions": "true",
+                            "output": {
+                                "text": {
+                                "values": [
+                                    "<? input.text ?> 만나시는 군요."
+                                ],
+                                "selection_policy": "sequential"
+                                }
+                            },
+                            "context": {
+                                "people": "<? input.text ?>"
                             }
-                        },
-                        "context": {
-                            "people": "<? input.text ?>"
                         }
-                    }
-                ** action
-                    {
-                        "conditions": "true",
-                        "output": {
-                            "text": {
-                            "values": [
-                                "<? input.text ?> 하실 예정이시군요."
-                            ],
-                            "selection_policy": "sequential"
+                    </pre>
+                * action
+                    <pre>
+                        {
+                            "conditions": "true",
+                            "output": {
+                                "text": {
+                                "values": [
+                                    "<? input.text ?> 하실 예정이시군요."
+                                ],
+                                "selection_policy": "sequential"
+                                }
+                            },
+                            "context": {
+                                "action": "<? input.text ?>"
                             }
-                        },
-                        "context": {
-                            "action": "<? input.text ?>"
                         }
-                    }
+                    </pre>
 1. 이제 전체 노드의 응답을 설계합니다. 이 응답은 필요한 Slot의 값을 모두 얻었을 때에 리턴됩니다. 노드 설정 화면에서 스크롤을 내려 ``Then respond with:``로 가십시오. 우측에 위치한 설정 아이콘을 클릭합니다. 팝업에서 ``If bot recognizs``란은 비워둡니다. ``Then response with``란에 다음 JSON을 입력하고 저장하십시오.
-    {
-        "context": {
-            "command": "add_event"
-        },
-        "output": {
-            "text": {
-            "values": [
-                "$people $place $action 약속 일정 캘린더에 추가하겠습니다~"
-            ],
-            "selection_policy": "sequential"
+    <pre>
+        {
+            "context": {
+                "command": "add_event"
+            },
+            "output": {
+                "text": {
+                "values": [
+                    "$people $place $action 약속 일정 캘린더에 추가하겠습니다~"
+                ],
+                "selection_policy": "sequential"
+                }
             }
         }
-    }
+    </pre>
 1. ``And finally`` 란은 ``Wait for user input``으로 유지하십시오.
 
 노드 하나의 작성을 마쳤습니다. 전체 노드의 응답에서 context의 command 값으로 add_event를 저장했습니다. 애플리케이션은 이 명령을 확인하고 실제 캘린더에 이벤트를 저장합니다. 애플리케이션이 $data.add_event_result에 결과를 저장된 채로 하위 노드를 호출합니다. 이제 하위 노드를 작성합니다.
+
 1. 이전 단계에서 작성한 노드의 메뉴 버튼을 눌러 ``Add child node를`` 클릭합니다.
 1. 자식 노드의 ``If bot recognizes:`` 란에 ``$data and $data.add_event_result``를 입력합니다.
 1. ``Then respond with:`` 란의 우측에 위치한 메뉴 아이콘을 눌러 ``Open JSON editor``를 클릭합니다.
 1. 다음의 JSON을 입력하십시오.
-    {
-        "context": {
-            "command": "finish"
-        },
-        "output": {
-            "text": {
-            "values": [
-                "일정이 추가됐어요 ~ <? $data.add_event_result ?>"
-            ],
-            "selection_policy": "sequential"
+    <pre>
+        {
+            "context": {
+                "command": "finish"
+            },
+            "output": {
+                "text": {
+                "values": [
+                    "일정이 추가됐어요 ~ <? $data.add_event_result ?>"
+                ],
+                "selection_policy": "sequential"
+                }
             }
         }
-    }
+    </pre>
 1. ``And finally`` 란은 ``Wait for user input``으로 유지하십시오.
 
 노드 작성이 완료되었습니다. 
 
-### 3.4 워크스페이스 테스트
+### 4.4 워크스페이스 테스트
 
 **Conversation Tool**의 우측 상단에 위치한 메세지 아이콘을 클릭하면 작성중인 워크스페이스를 테스트 할 수 있습니다.
 
-### 3.5 캘린더봇 테스트
+### 4.5 캘린더봇 테스트
 [이전 단계](14-애플리케이션-실행)에서 방문했던 앱 url을 방문하여 테스트 하십시오. 캘린더봇에게 다음의 질문을 던져보세요.
 * 오늘 뭐하지? (추천 기능은 오늘 아무런 일정도 없는 경우에만 실행됩니다. 이 기능을 테스트 하려면 구글 캘린더의 오늘 일정을 모두 삭제하신 후 진행하십시오.)
 * 오늘 일정 알려줘
 * 오늘 저녁에 엄마랑 집에서 홈쇼핑 하기로 했어
 * 오늘 일정 알려줘
 
-## 4. 카카오톡과 연동하기
+## 5. 카카오톡과 연동하기
 이 애플리케이션은 이미 카카오톡과 연결하기 위한 API를 제공하고 있습니다. 카카오톡 플러스친구 관리자센터에서 설정 과정만 진행하면 됩니다. 
 1. [플러스친구 관리자센터](https://center-pf.kakao.com/)에서 캘린더봇 용으로 생성한 친구를 선택합니다.
 1. 좌측 메뉴에서 ``스마트채팅``을 선택합니다.
@@ -269,10 +338,10 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 
 이제 카카오톡 메신저로 캘린더봇을 테스트할 수 있습니다.
 
-* 주의 : 생성한 플러스친구를 카카오톡 메신저에서 검색하여 찾으려면 ``관리 > 상세설정 > 공개설정`` 에서 ``홈 공개`` 및 ``검색 허용``을 활성화 하십시오.
-* 주의 : 구글의 캘린더 접근 권한 허용을 위한 링크는 카카오톡의 embedded webview에서의 실행을 허용하지 않습니다. 링크를 복사하여 별도의 브라우저에서 접속하십시오. (또한 모바일 프렌들리 하지 않으니 휴대폰을 가로모드로 놓고 사용하십시오.)
+* [주의] : 생성한 플러스친구를 카카오톡 메신저에서 검색하여 찾으려면 ``관리 > 상세설정 > 공개설정`` 에서 ``홈 공개`` 및 ``검색 허용``을 활성화 하십시오.
+* [주의] : 구글의 캘린더 접근 권한 허용을 위한 링크는 카카오톡의 embedded webview에서의 실행을 허용하지 않습니다. 링크를 복사하여 별도의 브라우저에서 접속하십시오. (또한 모바일 프렌들리 하지 않으니 휴대폰을 가로모드로 놓고 사용하십시오.)
 
-## 5. 페이스북 메신저와 연동하기
+## 6. 페이스북 메신저와 연동하기
 아직 지원되지 않으며 이번 실습에서 진행하지 않습니다.
 
 ## License
