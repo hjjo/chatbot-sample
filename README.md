@@ -87,7 +87,6 @@
 | :---: | :---: | :---: | :---: |
 Conversation | conversation | free | conversation-service
 Natural Language Understanding | natural-language-understanding | free | natural-language-understanding-service
-Weather Company Data | weatherinsights | Free-v2 | weather-service
 Cloudant NoSQL DB | cloudantNoSQLDB | Lite | cloudant-service
 
 #### 카탈로그 UI에서 서비스 생성하는 방법

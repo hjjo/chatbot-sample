@@ -21,12 +21,12 @@ set -e
 echo "Creating services..."
 bx service create conversation free "conversation-service"
 bx service create natural-language-understanding free "natural-language-understanding-service"
-bx service create weatherinsights Free-v2 "weather-service"
+# bx service create weatherinsights Free-v2 "weather-service"
 bx service create cloudantNoSQLDB Lite "cloudant-service"
 
 bx service key-create conversation-service cred1
 bx service key-create natural-language-understanding-service cred1
-bx service key-create weather-service cred1
+# bx service key-create weather-service cred1
 bx service key-create cloudant-service cred1
 echo "Services created."
 

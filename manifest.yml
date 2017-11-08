@@ -13,7 +13,7 @@ applications:
 - name: connectbot-2017
   command: npm start
   path: .
-  memory: 512M
+  memory: 256M
   instances: 1
   services:
   - conversation-service
