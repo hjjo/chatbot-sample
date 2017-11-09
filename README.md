@@ -49,7 +49,7 @@
 ## 사전 준비 사항
 
 * IBM Cloud의 계정을 생성합니다.
-    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/?target=%2Fdashboard%2Fapps)하거나 갖고 계신 계정을 사용하십시오. 계정에 512MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
+    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/?target=%2Fdashboard%2Fapps)하거나 갖고 계신 계정을 사용하십시오. 계정에 256MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
 * 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
     * [Node.js 런타임 및 npm 패키지 매니저 설치](https://nodejs.org/#download)
 * 로컬에서 변경한 애플리케이션을 IBM Cloud에 배포하려면 CLI(Command Line Interface)를 설치합니다.
@@ -252,13 +252,13 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
 
         | 필드 이름 | 필수 여부 |
         | :---: | :---: |
-        startDate | required |
-        endDate | optional |
-        startTime | optional |
-        endTime | optional |
-        people | required |
-        place | optional |
-        action | required |
+        $startDate | required |
+        $endDate | optional |
+        $startTime | optional |
+        $endTime | optional |
+        $people | required |
+        $place | optional |
+        $action | required |
         
     * 슬롯을 다음과 같이 설정하십시오. **If not present, ask** 필드를 입력하면 필수 항목, 입력하지 않으면 선택 항목으로 구분됩니다.
 
@@ -268,7 +268,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
         @sys-date | $endDate |  |
         @sys-time | $startTime |  |
         @sys-time | $endTime |  |
-        @people.literal | $people | 어떤 분과 만나세요? |
+        @people_pattern.literal | $people | 어떤 분과 만나세요? |
         @place.literal | $place |  |
         @action.literal | $action | 뭘 하실 예정이세요? |
 
