@@ -22,7 +22,7 @@ const tinyurl = require('tinyurl');
 var googleCred;
 const cloudant = require('../../util/db');
 const db = cloudant.db['context'];
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 try{
     googleCred = require('../../client_secret.json');
@@ -98,11 +98,11 @@ let listEvents = (context) => {
 
             console.log(context.startDate, context.endDate);
             if(!context.startDate){
-                context.startDate = new moment().format("YYYY-MM-DD");
+                context.startDate = moment().format("YYYY-MM-DD");
             }
 
-            let startDate = new moment(context.startDate + 'T00:00:00+0900');
-            let endDate =  context.endDate ? new moment(context.endDate + 'T00:00:00+0900') : new moment(context.startDate + 'T00:00:00+0900');
+            let startDate = moment(context.startDate + 'T00:00:00+0900');
+            let endDate =  context.endDate ? moment(context.endDate + 'T00:00:00+0900') : moment(context.startDate + 'T00:00:00+0900');
             context.endDate ? true : endDate.add(1, 'day');
 
             //console.log(startDate, endDate)
@@ -125,7 +125,8 @@ let listEvents = (context) => {
                     if(response.items && response.items.length > 0){
                         response.items.forEach(event => {
                             //console.log(event.start)
-                            context.data.list_events_result_string.push(new moment(event.start.dateTime).format('hh:mm') + " ~ " + new moment(event.end.dateTime).format('hh:mm') + " : " + event.summary);
+                            //console.log(event.start.dateTime)
+                            context.data.list_events_result_string.push(moment(event.start.dateTime).format('HH:mm') + " ~ " + moment(event.end.dateTime).format('HH:mm') + " : " + event.summary);
                         });
                     }
                     console.log(context.data.list_events_result_string)
@@ -159,24 +160,24 @@ let addEvent = (context) => {
             let startTime = context.startTime ? context.startTime : '00:00:00';
             let endTime = context.endTime;
 
-            let start = new moment(startDate + 'T'+ startTime + '+0900');
+            let start = moment(startDate + 'T'+ startTime + '+0900');
             let end;
             
             if(endDate){
                 if(endTime){
-                    end = new moment(endDate + 'T' + endTime + '+0900');
+                    end = moment(endDate + 'T' + endTime + '+0900');
                 }
                 else{
-                    end = new moment(endDate + 'T' + startTime + '+0900');
+                    end = moment(endDate + 'T' + startTime + '+0900');
                 }
             }
             else{
                 if(context.startTime){
-                    end = new moment(startDate + 'T' + startTime + '+0900');
+                    end = moment(startDate + 'T' + startTime + '+0900');
                     end.add(2, 'hour')
                 }
                 else{
-                    end = new moment(startDate + 'T'+ startTime + '+0900');
+                    end = moment(startDate + 'T'+ startTime + '+0900');
                     end.add(1, 'day');
                 }
             }

@@ -19,7 +19,7 @@
 const Conversation = require('watson-developer-cloud/conversation/v1'); // watson sdk
 const credentials = require('../util/service_credentials');
 const request = require('request');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const actionHandler = require('./actions/main')
 
 const cloudant = require('../util/db');

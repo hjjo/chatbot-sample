@@ -28,6 +28,7 @@
     "googleapis": "^22.2.0",
     "json2csv": "^3.11.5",
     "moment": "^2.17.1",
+    "moment-timezone": "^0.5.14",
     "request": "^2.80.0",
     "tinyurl": "^1.1.2",
     "watson-developer-cloud": "^2.40.0"
