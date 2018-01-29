@@ -50,9 +50,9 @@
 
 * IBM Cloud의 계정을 생성합니다.
     * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/?target=%2Fdashboard%2Fapps)하거나 갖고 계신 계정을 사용하십시오. 계정에 256MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
-* 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
+* (선택) 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
     * [Node.js 런타임 및 npm 패키지 매니저 설치](https://nodejs.org/#download)
-* 로컬에서 변경한 애플리케이션을 IBM Cloud에 배포하려면 CLI(Command Line Interface)를 설치합니다.
+* (선택) 로컬에서 변경한 애플리케이션을 IBM Cloud에 배포하려면 CLI(Command Line Interface)를 설치합니다.
     * [IBM Cloud CLI 설치](http://clis.ng.bluemix.net/)
 * 이 애플리케이션은 Google Calendar API를 사용합니다. 
     * [Google API 콘솔에서 프로젝트 생성](https://console.developers.google.com/flows/enableapi?apiid=calendar&authuser=0)
@@ -68,7 +68,7 @@
     * [소스코드 레파지토리](https://github.com/hjjo/chatbot-sample)에서 ``Clone or download`` 버튼을 통해 다운로드 하십시오. git 사용자의 경우 git client를 통해 clone하거나 folk합니다.
 
 ## 1. IBM Cloud에 배포하기
-[이 링크를 클릭하여 애플리케이션을 IBM Cloud에 배포합니다.](https://bluemix.net/deploy?repository=https://github.com/hjjo/chatbot-sample.git)
+<b>[이 링크를 클릭하여 애플리케이션을 IBM Cloud에 배포합니다.](https://bluemix.net/deploy?repository=https://github.com/hjjo/chatbot-sample.git)</b>
 
 애플리케이션 배포가 시작되면 [3. Conversation의 Workspace 및 IBM Cloud 환경 변수 설정](#3-conversation의-workspace-및-ibm-cloud-환경-변수-설정)을 시작하십시오. 
 
@@ -202,7 +202,7 @@ applications:
 
 캘린더봇에 schedule_add 인텐트를 추가합니다.
 1. 직관적으로 ``일정 추가해줘``라고 말할 수도 있고 간접적으로 ``금요일에 영화 예매해놨어 남친이랑 볼꺼야``라고 말할 수도 있습니다.
-1. 캘린더 봇은 직관적이던 간접적이던 그 말의 목적이 ``스케줄의 추가`` 내지 ``스케줄의 기억``이라면 하나의 Intent로 정의할 1. 있습니다. ``창문 좀 닫아줘``와 ``좀 춥지 않아?``는 전혀 다른 의미이지만 상황에 따라서 같은 Intent가 될 수도 있습니다.
+1. 캘린더 봇은 직관적이던 간접적이던 그 말의 목적이 ``스케줄의 추가`` 내지 ``스케줄의 기억``이라면 하나의 Intent로 정의할 수 있습니다. ``창문 좀 닫아줘``와 ``좀 춥지 않아?``는 전혀 다른 의미이지만 상황에 따라서 같은 Intent가 될 수도 있습니다.
 1. 인텐트 이름으로 ``schedule_add``를 입력합니다. 최소 20개 이상의 사용자 메세지 예시를 입력하십시오.
 1. 예시 : 
         * 내일 업체랑 미팅 있어
@@ -214,12 +214,12 @@ applications:
         * 다음 주 수요일 친구랑 약속 있는데 추가좀
         * 오늘 저녁에 엄마랑 영화 보기로 했어
         * 다음주 토요일에 동창회가 잡혔네
-1. 사용자의 메세지에는 오타가 있을 수도 있고 제대로 된 띄어 쓰기가 없을 수도 있습니다. 이러한 것들이 모두 학습되어야 더 정확한 챗봇이 만들어질 수 있습니다.
+1. 사용자의 메세지는 오타가 있을 수도 있고 띄어 쓰기, 맞춤법 등이 정확하지 않을 수도 있습니다. 이러한 것들이 모두 학습되어야 더 정확한 챗봇이 만들어질 수 있습니다.
 
 ### 4.2 Entity 추가
 워크스페이스에서 ``Entities`` 탭을 선택합니다. ``Create new`` 버튼으로 새로운 엔티티를 생성할 수 있습니다. 
 
-스케줄을 추가할 때에 사용하는 Entity 중에 장소에 해당하는 place 엔티티를 생성합니다. 
+스케줄을 추가할 때에 사용하는 Entity 중에서 장소에 해당하는 place 엔티티를 생성합니다. 
 1. 엔티티 이름으로  ``place``를 입력합니다.
 1. 두 가지 방식으로 엔티티를 정의할 수 있습니다. 
     * Value Type으로 Synonims를 선택하면 해당 엔티티를 가리키는 단어들을 입력함으로써 엔티티를 정의할 수 있습니다. 이 방식은 많은 Value 값과 Synonim 값을 추가 해야 정확도있는 서비스를 제공할 수 있지만 머신러닝 기반이어서 후에 잘못 추출되거나 추출되지 않을 때에 재트레이닝을 통한 교정 및 추가가 가능합니다.
@@ -283,10 +283,10 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
             ![icon-menu](readme_images/menu_icon.png)
 
         * 스크롤을 내려 엔티티가 추출된 경우와 추출되지 않은 경우에 나누어 응답을 설정합니다.
-            * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 <pre>\<? $people ?\> 만나시는군요.</pre>를 입력합니다. (aciton 슬롯을 설정할 때에는 <pre>\<? $action ?\> 할 예정이시군요.</pre> 를 입력합니다.) 
+            * ``Found``의 ``If bot reconizes`` 란에 ``true``를 입력합니다. ``Respond with`` 란에 ```\<? $people ?\> 만나시는군요.```를 입력합니다. (aciton 슬롯을 설정할 때에는 ```\<? $action ?\> 할 예정이시군요.``` 를 입력합니다.) 
             * ``Not found``의 ``If bot recognizes`` 란에 ``true``를 입력하고 우측에 위치한 설정 아이콘을 클릭합니다. ``Then respond with:``의 우측에 위치한 메뉴 버튼을 클릭하고 ``Open JSON editor``를 선택합니다. 다음의 JSON을 입력하여 사용자의 메세지 전체를 컨텍스트에 저장합니다.
                 * people
-                    <pre>
+                    ```
                         {
                             "conditions": "true",
                             "output": {
@@ -301,9 +301,9 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
                                 "people": "<? input.text ?>"
                             }
                         }
-                    </pre>
+                    ```
                 * action
-                    <pre>
+                    ```
                         {
                             "conditions": "true",
                             "output": {
@@ -318,9 +318,9 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
                                 "action": "<? input.text ?>"
                             }
                         }
-                    </pre>
+                    ```
 1. 이제 전체 노드의 응답을 설계합니다. 이 응답은 필요한 Slot의 값을 모두 얻었을 때에 리턴됩니다. 노드 설정 화면에서 스크롤을 내려 ``Then respond with:``로 가십시오. 우측에 위치한 메뉴 아이콘을 클릭합니다. 다음 JSON을 입력하십시오.
-    <pre>
+    ```
         {
             "context": {
                 "command": "add_event"
@@ -334,16 +334,16 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
                 }
             }
         }
-    </pre>
+    ```
 1. ``And finally`` 란은 ``Wait for user input``으로 유지하십시오.
 
 노드 하나의 작성을 마쳤습니다. 전체 노드의 응답에서 context의 command 값으로 add_event를 저장했습니다. 애플리케이션은 이 명령을 확인하고 실제 캘린더에 이벤트를 저장합니다. 애플리케이션이 $data.add_event_result에 결과를 저장된 채로 하위 노드를 호출합니다. 이제 하위 노드를 작성합니다.
 
 1. 이전 단계에서 작성한 노드의 메뉴 버튼을 눌러 ``Add child node를`` 클릭합니다.
-1. 자식 노드의 ``If bot recognizes:`` 란에 <pre>$data and $data.add_event_result</pre>를 입력합니다.
+1. 자식 노드의 ``If bot recognizes:`` 란에 ```$data and $data.add_event_result```를 입력합니다.
 1. ``Then respond with:`` 란의 우측에 위치한 메뉴 아이콘을 눌러 ``Open JSON editor``를 클릭합니다.
 1. 다음의 JSON을 입력하십시오.
-    <pre>
+    ```
         {
             "context": {
                 "command": "finish"
@@ -357,7 +357,7 @@ shedule_add 인텐트에 대해 응답하는 다이얼로그를 작성합니다.
                 }
             }
         }
-    </pre>
+    ```
 1. ``And finally`` 란은 ``Wait for user input``으로 유지하십시오.
 
 노드 작성이 완료되었습니다. 
@@ -410,7 +410,7 @@ Find more open source projects on the
 [conversation_simple]: https://github.com/watson-developer-cloud/conversation-simple
 [cf_docs]: (https://www.ibm.com/watson/developercloud/doc/common/getting-started-cf.html)
 [cloud_foundry]: https://github.com/cloudfoundry/cli#downloads
-[demo_url]: https://connectbot-2017.eu-gb.mybluemix.net/
+[demo_url]: https://calendarbot-201801.eu-gb.mybluemix.net/
 [doc_intents]: (https://console.bluemix.net/docs/services/conversation/intents-entities.html#planning-your-entities)
 [docs]: http://www.ibm.com/watson/developercloud/doc/conversation/overview.shtml
 [docs_landing]: (https://console.bluemix.net/docs/services/conversation/index.html#about)

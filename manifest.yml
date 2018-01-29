@@ -10,7 +10,7 @@ declared-services:
     label: cloudantNoSQLDB
     plan: Lite
 applications:
-- name: connectbot-2017
+- name: calendarbot-201801
   command: npm start
   path: .
   memory: 256M
