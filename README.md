@@ -180,7 +180,7 @@ applications:
 애플리케이션 대시보드에서 변경한 환경 변수를 반영하기 위해 애플리케이션을 재시작 하십시오. 
 상단의 재시작 아이콘을 눌러 재시작할 수 있습니다.
 
-    ![Restart icon](readme_images/restart_icon.png)
+![Restart icon](readme_images/restart_icon.png)
 
 ### 3.4 애플리케이션 실행
 ``Routes`` 버튼을 클릭하여 애플리케이션 URL을 확인하고 브라우저에서 접속합니다.
