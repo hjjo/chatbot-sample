@@ -49,7 +49,7 @@
 ## 사전 준비 사항
 
 * IBM Cloud의 계정을 생성합니다.
-    * IBM Cloud에서 [새로운 계정을 생성](https://console.bluemix.net/registration/?target=%2Fdashboard%2Fapps)하거나 갖고 계신 계정을 사용하십시오. 계정에 256MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
+    * IBM Cloud에서 [새로운 계정을 생성](https://ibm.biz/Meetup_Seoul)하거나 갖고 계신 계정을 사용하십시오. 계정에 256MB의 앱을 실행하고 5개 이상의 서비스를 생성할 수 있는 가용 공간이 있어야 합니다.
 * (선택) 애플리케이션을 로컬에서 실행하려면 Node.js 런타임 및 npm 패키지 매니저를 설치합니다.:
     * [Node.js 런타임 및 npm 패키지 매니저 설치](https://nodejs.org/#download)
 * (선택) 로컬에서 변경한 애플리케이션을 IBM Cloud에 배포하려면 CLI(Command Line Interface)를 설치합니다.
